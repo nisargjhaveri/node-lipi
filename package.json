@@ -1,0 +1,25 @@
+{
+  "name": "lipi",
+  "version": "0.0.1",
+  "description": "Collection of tools for working with Indian language scripts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nisargjhaveri/node-lipi.git"
+  },
+  "keywords": [
+    "indic",
+    "indic-scripts",
+    "devanagari",
+    "gujarati"
+  ],
+  "author": "Nisarg Jhaveri <nisargjhaveri@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nisargjhaveri/node-lipi/issues"
+  },
+  "homepage": "https://github.com/nisargjhaveri/node-lipi#readme"
+}
