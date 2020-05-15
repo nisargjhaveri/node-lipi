@@ -1,3 +1,5 @@
-module.exports = function () {
-    console.log("Work in progress");
-}
+const detect = require('./src/detect');
+
+module.exports = {
+    detect,
+};
