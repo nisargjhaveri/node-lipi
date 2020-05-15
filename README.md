@@ -25,3 +25,11 @@ Supported scripts:
 - `mlym` (Malayalam)
 
 Return value will be one of the above code or `qaaa`, if the it was not able to identify one of these scripts with enough confidence.
+
+## Transliterate
+
+Transliterate the input string. Takes source and target script code.
+
+Supported scripts:
+- `deva` (Devanagari)
+- `gujr` (Gujarati)
