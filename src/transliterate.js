@@ -82,14 +82,14 @@ function transliterate(str, from, to) {
     str = str.normalize();
 
     if (from === to
-        || typeof transliterators[from]?.toDevanagari !== "function"
-        || typeof transliterators[to]?.fromDevanagari !== "function") {
+        || !(from in transliterators) || typeof transliterators[from].toDevanagari !== "function"
+        || !(to in transliterators) || typeof transliterators[to].fromDevanagari !== "function") {
         // We don't support this language pair
         // Early return the normalized string
         return str;
     }
 
-    return transliterators[to].fromDevanagari(transliterators[from]?.toDevanagari(str));
+    return transliterators[to].fromDevanagari(transliterators[from].toDevanagari(str));
 }
 
 module.exports = transliterate;
