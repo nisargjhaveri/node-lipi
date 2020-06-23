@@ -33,3 +33,4 @@ Transliterate the input string. Takes source and target script code.
 Supported scripts:
 - `deva` (Devanagari)
 - `gujr` (Gujarati)
+- `qaab` (ISO 15919)
