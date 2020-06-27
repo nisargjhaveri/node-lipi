@@ -4,7 +4,7 @@
   "description": "Collection of tools for working with Indian language scripts",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/nisargjhaveri/node-lipi/issues"
   },
-  "homepage": "https://github.com/nisargjhaveri/node-lipi#readme"
+  "homepage": "https://github.com/nisargjhaveri/node-lipi#readme",
+  "devDependencies": {
+    "mocha": "^8.0.1"
+  }
 }
