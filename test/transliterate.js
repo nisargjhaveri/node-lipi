@@ -37,16 +37,20 @@ describe('transliterate', function () {
     describe('ISO 15919', function () {
         const tests = [
             ["disambiguate vowel", "થઇ", "gujr", "tha:i"],
+            ["no disambiguation", "થઇ", "gujr", "thai", { disableDisambiguation: true }],
+            ["use c and ch", "છાયા ચાર", "gujr", "chāyā cāra"],
+            ["use ch and chh", "છાયા ચાર", "gujr", "chhāyā chāra", { useCHandCHH: true }],
             ["chandrabindu", "चाँद सितारे", "deva", "cā̃da sitārē"],
             ["nukta", "ताज़ा ताज़ा", "deva", "tāzā tāzā"],
             ["nukta", "सब अफ़साने", "deva", "saba afasānē"],
             ["anuswara", "काजल, बिंदिया, कंगन, झुमके", "deva", "kājala, bindiyā, kaṅgana, jhumakē"],
             ["virama", "प्यार हुआ इक़रार हुआ", "deva", "pyāra huā iqarāra huā"],
+            ["delete final schwa", "प्यार हुआ इक़रार हुआ", "deva", "pyār huā iqarār huā", { deleteFinalSchwa: true }],
         ];
 
-        for (const [name, text, from, target] of tests) {
+        for (const [name, text, from, target, options={}] of tests) {
             it(name, function () {
-                assert.equal(transliterate(text, from, "qaab"), target);
+                assert.equal(transliterate(text, from, "qaab", {"qaab": options}), target);
             });
         }
 

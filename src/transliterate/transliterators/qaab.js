@@ -2,8 +2,22 @@ module.exports = {
     // ISO 15919
     // Only supports from devanagari and not to devanagari
 
-    fromDevanagari(str) {
+    /**
+     * @param {string} str String in Devanagari
+     * @param {Object} options Additional options
+     * @param {boolean} options.disableDisambiguation Disable disambiguation with ":". Default `false`.
+     * @param {boolean} options.deleteFinalSchwa Delete schwa at the end of the word. Default `false`.
+     * @param {boolean} options.useCHandCHH Use "ch" for "च" and "chh" for "छ" instead of "c" and "ch". Default `false`.
+     */
+    fromDevanagari(str, options = {}) {
         str = str.normalize();
+
+        options =  {
+            disableDisambiguation: false,
+            deleteFinalSchwa: false,
+            useCHandCHH: false,
+            ...options
+        }
 
         const charMap = [
             "",		//U+0900	ऀ	DEVANAGARI SIGN INVERTED CANDRABINDU
@@ -34,8 +48,8 @@ module.exports = {
             "g",	//U+0917	ग	DEVANAGARI LETTER GA
             "gh",	//U+0918	घ	DEVANAGARI LETTER GHA
             "ṅ",	//U+0919	ङ	DEVANAGARI LETTER NGA
-            "c",	//U+091A	च	DEVANAGARI LETTER CA
-            "ch",	//U+091B	छ	DEVANAGARI LETTER CHA
+            options.useCHandCHH ? "ch" : "c",	//U+091A	च	DEVANAGARI LETTER CA
+            options.useCHandCHH ? "chh" : "ch",	//U+091B	छ	DEVANAGARI LETTER CHA
             "j",	//U+091C	ज	DEVANAGARI LETTER JA
             "jh",	//U+091D	झ	DEVANAGARI LETTER JHA
             "ñ",	//U+091E	ञ	DEVANAGARI LETTER NYA
@@ -197,7 +211,7 @@ module.exports = {
         ];
 
         const inherentVowel = "a";
-        const disambiguationCharacter = ":";
+        const disambiguationCharacter = options.disableDisambiguation ? "" : ":";
         const combiningTilde = "\u0303";
 
         function is(charCode, ranges) {
@@ -231,6 +245,15 @@ module.exports = {
             }
 
             return String.fromCodePoint(charCode);
+        }
+
+        function deleteSchwa(result, currentState) {
+            // Remove last 'a' if exists
+            if (currentState === state.CONSONENT && result[result.length - 1] === inherentVowel) {
+                result = result.substring(0, result.length - 1);
+            }
+
+            return result;
         }
 
         const state = {
@@ -285,9 +308,7 @@ module.exports = {
             }
             else if (is(current, matras) || is(current, virama)) {
                 // Remove last 'a' if exists
-                if (currentState === state.CONSONENT && result[result.length - 1] === inherentVowel) {
-                    result = result.substring(0, result.length - 1);
-                }
+                result = deleteSchwa(result, currentState);
 
                 result += getChar(current);
 
@@ -320,6 +341,11 @@ module.exports = {
                 currentState = state.OTHER;
             }
             else {
+                // If this is space, remove last 'a' if required.
+                if (options.deleteFinalSchwa && String.fromCodePoint(current).match(/\s/ug).length) {
+                    result = deleteSchwa(result, currentState);
+                }
+
                 // Just add the converted character
                 result += getChar(current);
 
