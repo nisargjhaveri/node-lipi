@@ -342,7 +342,8 @@ module.exports = {
             }
             else {
                 // If this is space, remove last 'a' if required.
-                if (options.deleteFinalSchwa && String.fromCodePoint(current).match(/\s/ug).length) {
+                // Currently assumes anything else not captured above terminates the word.
+                if (options.deleteFinalSchwa /* && String.fromCodePoint(current).match(/\s/ug)*/) {
                     result = deleteSchwa(result, currentState);
                 }
 
