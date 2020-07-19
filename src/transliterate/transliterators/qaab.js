@@ -249,7 +249,7 @@ module.exports = {
 
         function deleteSchwa(result, currentState) {
             // Remove last 'a' if exists
-            if (currentState === state.CONSONENT && result[result.length - 1] === inherentVowel) {
+            if (currentState === state.CONSONENT && result.length && result[result.length - 1] === inherentVowel) {
                 result = result.substring(0, result.length - 1);
             }
 
@@ -341,7 +341,7 @@ module.exports = {
                 currentState = state.OTHER;
             }
             else {
-                // If this is space, remove last 'a' if required.
+                // If this terminates the word, remove last 'a' if required.
                 // Currently assumes anything else not captured above terminates the word.
                 if (options.deleteFinalSchwa /* && String.fromCodePoint(current).match(/\s/ug)*/) {
                     result = deleteSchwa(result, currentState);
@@ -352,6 +352,11 @@ module.exports = {
 
                 currentState = state.OTHER;
             }
+        }
+
+        // Remove last 'a' if required.
+        if (options.deleteFinalSchwa) {
+            result = deleteSchwa(result, currentState);
         }
 
         return result;
