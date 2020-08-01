@@ -8,6 +8,7 @@ module.exports = {
      * @param {boolean} options.disableDisambiguation Disable disambiguation with ":". Default `false`.
      * @param {boolean} options.deleteFinalSchwa Delete schwa at the end of the word. Default `false`.
      * @param {boolean} options.useCHandCHH Use "ch" for "च" and "chh" for "छ" instead of "c" and "ch". Default `false`.
+     * @param {boolean} options.autoConvertAnuswaraToChandrabindu Convert Anuswara to Chandrabindu when it occurs before a vowel or at word-final position. Default `false`.
      */
     fromDevanagari(str, options = {}) {
         str = str.normalize();
@@ -16,6 +17,7 @@ module.exports = {
             disableDisambiguation: false,
             deleteFinalSchwa: false,
             useCHandCHH: false,
+            autoConvertAnuswaraToChandrabindu: false,
             ...options
         }
 
@@ -210,6 +212,14 @@ module.exports = {
             [0x0962, 0x0963],   // DEVANAGARI VOWEL SIGN VOCALIC L, LL
         ];
 
+        const wordCharacters = [
+            [0x0900, 0x094F],
+            // Skip AUM
+            [0x0951, 0x0963],
+            // Skip dandas, numbers and puncuations
+            [0x0972, 0x097F],
+        ]
+
         const inherentVowel = "a";
         const disambiguationCharacter = options.disableDisambiguation ? "" : ":";
         const combiningTilde = "\u0303";
@@ -268,7 +278,7 @@ module.exports = {
         let currentState = state.OTHER;
         for (let i = 0; i < length; ++i) {
             const current = source[i];
-            const next = (i < length - 1) ? source[i + 1] : "";
+            const next = (i < length - 1) ? source[i + 1] : 0;
 
             if (is(current, vowels)) {
                 let target = getChar(current);
@@ -301,8 +311,10 @@ module.exports = {
 
                 result += target;
 
-                // Add inherent vowel
-                result += inherentVowel;
+                if (!options.deleteFinalSchwa || is(next, wordCharacters)) {
+                    // Add inherent vowel
+                    result += inherentVowel;
+                }
 
                 currentState = state.CONSONENT;
             }
@@ -325,6 +337,15 @@ module.exports = {
                     }
                 }
 
+                if (options.autoConvertAnuswaraToChandrabindu) {
+                    if ((is(next, vowels) || !is(next, wordCharacters))
+                        && (currentState === state.VOWEL || currentState === state.CONSONENT))
+                    {
+                        result += combiningTilde;
+                        isHandled = true;
+                    }
+                }
+
                 if (!isHandled) {
                     result += getChar(current);
                 }
@@ -341,22 +362,11 @@ module.exports = {
                 currentState = state.OTHER;
             }
             else {
-                // If this terminates the word, remove last 'a' if required.
-                // Currently assumes anything else not captured above terminates the word.
-                if (options.deleteFinalSchwa /* && String.fromCodePoint(current).match(/\s/ug)*/) {
-                    result = deleteSchwa(result, currentState);
-                }
-
                 // Just add the converted character
                 result += getChar(current);
 
                 currentState = state.OTHER;
             }
-        }
-
-        // Remove last 'a' if required.
-        if (options.deleteFinalSchwa) {
-            result = deleteSchwa(result, currentState);
         }
 
         return result;

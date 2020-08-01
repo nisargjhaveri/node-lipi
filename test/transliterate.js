@@ -44,6 +44,8 @@ describe('transliterate', function () {
             ["nukta", "ताज़ा ताज़ा", "deva", "tāzā tāzā"],
             ["nukta", "सब अफ़साने", "deva", "saba afasānē"],
             ["anuswara", "काजल, बिंदिया, कंगन, झुमके", "deva", "kājala, bindiyā, kaṅgana, jhumakē"],
+            ["anuswara", "કાંઈ ઘણાં સંતો", "gujr", "kāṁī ghaṇāṁ santō"],
+            ["anuswara chandrabindu", "કાંઈ ઘણાં સંતો ઘણાં", "gujr", "kā̃ī ghaṇā̃ santō ghaṇā̃", { autoConvertAnuswaraToChandrabindu: true }],
             ["virama", "प्यार हुआ इक़रार हुआ प्यार", "deva", "pyāra huā iqarāra huā pyāra"],
             ["delete final schwa", "प्यार हुआ इक़रार हुआ प्यार", "deva", "pyār huā iqarār huā pyār", { deleteFinalSchwa: true }],
             ["empty string", "", "deva", ""],
